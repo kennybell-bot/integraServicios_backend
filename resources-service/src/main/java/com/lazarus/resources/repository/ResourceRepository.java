@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ResourceRepository extends JpaRepository<Resource, UUID> {
-    List<Resource> findByResourceTypeId(UUID typeId);
-    List<Resource> findByLocationId(UUID locationId);
+    List<Resource> findByType_Id(UUID typeId);
+    List<Resource> findByLocation_Id(UUID locationId);
 }

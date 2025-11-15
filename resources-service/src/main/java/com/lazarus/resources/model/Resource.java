@@ -26,10 +26,10 @@ public class Resource {
     private Boolean active;
 
     @ManyToOne
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name = "location_id", nullable = false)
     private ResourceLocation location;
 
     @ManyToOne
-    @JoinColumn(name = "type_id")
+    @JoinColumn(name = "type_id", nullable = false)
     private ResourceType type;
 }

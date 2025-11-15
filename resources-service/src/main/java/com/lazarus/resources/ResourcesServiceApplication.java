@@ -10,7 +10,7 @@ public class ResourcesServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ResourcesServiceApplication.class, args);
-	}
+ 	}
 
 }
 
