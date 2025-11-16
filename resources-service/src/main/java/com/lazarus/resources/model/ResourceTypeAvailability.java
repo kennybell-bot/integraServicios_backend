@@ -23,6 +23,6 @@ public class ResourceTypeAvailability {
     private Boolean isOpen;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resource_type_id")
+    @JoinColumn(name = "resource_type_id", nullable = false)
     private ResourceType resourceType;
 }

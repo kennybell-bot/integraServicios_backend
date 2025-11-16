@@ -30,6 +30,6 @@ public class Resource {
     private ResourceLocation location;
 
     @ManyToOne
-    @JoinColumn(name = "type_id", nullable = false)
+    @JoinColumn(name = "resource_type_id", nullable = false)
     private ResourceType type;
 }

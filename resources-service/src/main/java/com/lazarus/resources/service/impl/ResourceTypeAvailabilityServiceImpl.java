@@ -56,7 +56,7 @@ public class ResourceTypeAvailabilityServiceImpl implements ResourceTypeAvailabi
 
     @Override
     public List<ResourceTypeAvailability> findByResourceTypeId(UUID resourceTypeId) {
-        return repo.findByResourceType_Id(resourceTypeId);
+        return repo.findByResourceTypeId(resourceTypeId);
     }
 }
 
