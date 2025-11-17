@@ -6,6 +6,7 @@ import com.lazarus.resources.service.ResourceTypeAvailabilityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,36 +21,43 @@ public class ResourceTypeAvailabilityController {
     }
 
     @GetMapping
-    public List<ResourceTypeAvailability> getAll() {
-        return service.findAll();
+    public ResponseEntity<List<ResourceTypeAvailability>> getAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
-     @GetMapping("/type/{typeId}")
+    @GetMapping("/type/{typeId}")
     public ResponseEntity<List<ResourceTypeAvailability>> getByType(@PathVariable UUID typeId) {
-        return ResponseEntity.ok(service.findByResourceTypeId(typeId));
+        List<ResourceTypeAvailability> result = service.findByResourceTypeId(typeId);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
-    public ResourceTypeAvailability getById(@PathVariable UUID id) {
-        return service.findById(id);
+    public ResponseEntity<ResourceTypeAvailability> getById(@PathVariable UUID id) {
+        ResourceTypeAvailability availability = service.findById(id);
+        return ResponseEntity.ok(availability);
     }
 
+    @SuppressWarnings("null")
     @PostMapping
-    public ResourceTypeAvailability create(@RequestBody ResourceTypeAvailability a) {
-        return service.create(a);
+    public ResponseEntity<ResourceTypeAvailability> create(@RequestBody ResourceTypeAvailability a) {
+        ResourceTypeAvailability created = service.create(a);
+        return ResponseEntity
+                .created(URI.create("/availability/" + created.getId()))
+                .body(created);
     }
 
     @PutMapping("/{id}")
-    public ResourceTypeAvailability update(
+    public ResponseEntity<ResourceTypeAvailability> update(
             @PathVariable UUID id,
             @RequestBody ResourceTypeAvailability a
     ) {
-        return service.update(id, a);
+        ResourceTypeAvailability updated = service.update(id, a);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
+        return ResponseEntity.noContent().build(); // 204 limpio y profesional
     }
 }
-
