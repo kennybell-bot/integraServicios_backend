@@ -1,7 +1,12 @@
 package com.lazarus.resources.service.impl;
 
 import com.lazarus.resources.service.ResourceService;
+
+import lombok.RequiredArgsConstructor;
+
+import com.lazarus.resources.repository.ResourceLocationRepository;
 import com.lazarus.resources.repository.ResourceRepository;
+import com.lazarus.resources.repository.ResourceTypeRepository;
 import com.lazarus.resources.model.Resource;
 
 import org.springframework.stereotype.Service;
@@ -10,13 +15,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceServiceImpl implements ResourceService {
 
     private final ResourceRepository repo;
-
-    public ResourceServiceImpl(ResourceRepository repo) {
-        this.repo = repo;
-    }
+    private final ResourceLocationRepository locationRepository;
+    private final ResourceTypeRepository resourceTypeRepository;
 
     @Override
     public List<Resource> findAll() {
@@ -30,6 +34,7 @@ public class ResourceServiceImpl implements ResourceService {
             .orElseThrow(() -> new RuntimeException("Recurso no encontrado con ID: " + id));
     }
 
+    @SuppressWarnings("null")
     @Override
     public Resource create(Resource resource) {
         if (resource == null) {
@@ -37,6 +42,14 @@ public class ResourceServiceImpl implements ResourceService {
         }
         
         try {
+            resource.setLocation(locationRepository.getReferenceById(
+                    resource.getLocation().getId()
+            ));
+
+            resource.setType(resourceTypeRepository.getReferenceById(
+                    resource.getType().getId()
+            ));
+
             return repo.save(resource);
         } catch (Exception e) {
             throw new RuntimeException("Error al crear el recurso: " + e.getMessage(), e);

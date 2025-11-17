@@ -3,6 +3,9 @@ package com.lazarus.resources.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
+import java.util.Map;
+import com.vladmihalcea.hibernate.type.json.JsonType;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "resource")
@@ -19,7 +22,9 @@ public class Resource {
     private String name;
 
     @Column(name = "attributes", columnDefinition = "jsonb")
-    private String attributesJson; // JSON en texto; se puede parsear en controller/servicio
+    @Type(JsonType.class)
+    private Map<String, Object> attributesJson;
+
 
     private String photoUrl;
 
