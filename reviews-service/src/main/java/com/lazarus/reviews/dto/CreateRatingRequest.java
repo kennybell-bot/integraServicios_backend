@@ -1,7 +1,6 @@
 package com.lazarus.reviews.dto;
 
 import jakarta.validation.constraints.*;
-
 import java.util.UUID;
 
 public class CreateRatingRequest {
@@ -9,11 +8,23 @@ public class CreateRatingRequest {
     @NotNull(message = "reservationId is required")
     private UUID reservationId;
 
-    @NotNull(message = "score is required")
-    @DecimalMin(value = "0.0", message = "score must be at least 0.0")
-    @DecimalMax(value = "5.0", message = "score must be at most 5.0")
-    @Digits(integer = 1, fraction = 1, message = "score must have exactly one decimal place")
-    private Double score;
+    @NotNull(message = "serviceCompliance is required")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "5.0")
+    @Digits(integer = 1, fraction = 1)
+    private Double serviceCompliance;
+
+    @NotNull(message = "resourceCondition is required")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "5.0")
+    @Digits(integer = 1, fraction = 1)
+    private Double resourceCondition;
+
+    @NotNull(message = "staffKindness is required")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "5.0")
+    @Digits(integer = 1, fraction = 1)
+    private Double staffKindness;
 
     public UUID getReservationId() {
         return reservationId;
@@ -23,11 +34,27 @@ public class CreateRatingRequest {
         this.reservationId = reservationId;
     }
 
-    public Double getScore() {
-        return score;
+    public Double getServiceCompliance() {
+        return serviceCompliance;
     }
 
-    public void setScore(Double score) {
-        this.score = score;
+    public void setServiceCompliance(Double serviceCompliance) {
+        this.serviceCompliance = serviceCompliance;
+    }
+
+    public Double getResourceCondition() {
+        return resourceCondition;
+    }
+
+    public void setResourceCondition(Double resourceCondition) {
+        this.resourceCondition = resourceCondition;
+    }
+
+    public Double getStaffKindness() {
+        return staffKindness;
+    }
+
+    public void setStaffKindness(Double staffKindness) {
+        this.staffKindness = staffKindness;
     }
 }

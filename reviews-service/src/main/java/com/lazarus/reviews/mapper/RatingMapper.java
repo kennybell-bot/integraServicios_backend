@@ -6,38 +6,46 @@ import com.lazarus.reviews.dto.UpdateRatingRequest;
 import com.lazarus.reviews.model.Rating;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.math.RoundingMode;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class RatingMapper {
 
-    // Create DTO -> Entity
-    public Rating toEntity(CreateRatingRequest dto) {
+    private static final int DECIMALS = 1;
+
+    private static BigDecimal toBigDecimal(Double value) {
+        return BigDecimal
+                .valueOf(value)
+                .setScale(DECIMALS, RoundingMode.HALF_UP);
+    }
+
+    // -------- CREATE --------
+    public static Rating toEntity(CreateRatingRequest request) {
         Rating rating = new Rating();
-        rating.setReservationId(dto.getReservationId());
-        rating.setScore(BigDecimal.valueOf(dto.getScore()));
+
+        rating.setReservationId(request.getReservationId());
+        rating.setServiceCompliance(toBigDecimal(request.getServiceCompliance()));
+        rating.setResourceCondition(toBigDecimal(request.getResourceCondition()));
+        rating.setStaffKindness(toBigDecimal(request.getStaffKindness()));
+
         return rating;
     }
 
-    // Update DTO -> Entity (solo score)
-    public void updateEntity(Rating entity, UpdateRatingRequest dto) {
-        entity.setScore(BigDecimal.valueOf(dto.getScore()));
+    // -------- UPDATE --------
+    public static void updateEntity(Rating rating, UpdateRatingRequest request) {
+        rating.setServiceCompliance(toBigDecimal(request.getServiceCompliance()));
+        rating.setResourceCondition(toBigDecimal(request.getResourceCondition()));
+        rating.setStaffKindness(toBigDecimal(request.getStaffKindness()));
     }
 
-    // Entity -> Response DTO
-    public RatingResponse toResponse(Rating rating) {
-        OffsetDateTime createdAtOffset =
-                rating.getCreatedAt().atOffset(ZoneOffset.UTC);
-
+    // -------- RESPONSE --------
+    public static RatingResponse toResponse(Rating rating) {
         return new RatingResponse(
                 rating.getId(),
                 rating.getReservationId(),
-                rating.getScore().doubleValue(),
-                createdAtOffset
+                rating.getServiceCompliance().doubleValue(),
+                rating.getResourceCondition().doubleValue(),
+                rating.getStaffKindness().doubleValue(),
+                rating.getCreatedAt()
         );
     }
-
 }

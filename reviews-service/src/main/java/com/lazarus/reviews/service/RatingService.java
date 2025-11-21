@@ -10,15 +10,17 @@ public interface RatingService {
 
     RatingResponse createRating(CreateRatingRequest request);
 
-    RatingResponse updateRating(UUID id, UpdateRatingRequest request);
-
     RatingResponse getRatingById(UUID id);
 
-    RatingResponse getRatingByReservationId(UUID reservationId);
-
-    Double getGlobalAverageScore();
-
-    Double getAverageScoreByReservation(UUID reservationId);
+    RatingResponse updateRating(UUID id, UpdateRatingRequest request);
 
     void deleteRating(UUID id);
+
+    Double getGlobalAverage();
+
+    Double getAverageForReservation(UUID reservationId);
+
+    boolean existsByReservationId(UUID reservationId);
+    
+    RatingResponse getRatingByReservationId(UUID reservationId);
 }

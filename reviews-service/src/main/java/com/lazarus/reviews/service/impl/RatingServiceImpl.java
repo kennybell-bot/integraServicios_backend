@@ -3,90 +3,101 @@ package com.lazarus.reviews.service.impl;
 import com.lazarus.reviews.dto.CreateRatingRequest;
 import com.lazarus.reviews.dto.RatingResponse;
 import com.lazarus.reviews.dto.UpdateRatingRequest;
+import com.lazarus.reviews.exception.ResourceNotFoundException;
 import com.lazarus.reviews.mapper.RatingMapper;
 import com.lazarus.reviews.model.Rating;
 import com.lazarus.reviews.repository.RatingRepository;
 import com.lazarus.reviews.service.RatingService;
-import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
-@Transactional
+@RequiredArgsConstructor
 public class RatingServiceImpl implements RatingService {
 
     private final RatingRepository ratingRepository;
-    private final RatingMapper ratingMapper;
-
-    public RatingServiceImpl(RatingRepository ratingRepository, RatingMapper ratingMapper) {
-        this.ratingRepository = ratingRepository;
-        this.ratingMapper = ratingMapper;
-    }
 
     @Override
     public RatingResponse createRating(CreateRatingRequest request) {
 
+        // aseguramos unicidad por reservationId
         if (ratingRepository.existsByReservationId(request.getReservationId())) {
-            throw new IllegalStateException("A rating for this reservation already exists.");
+            throw new IllegalArgumentException("Rating for this reservation already exists");
         }
 
-        Rating rating = ratingMapper.toEntity(request);
-        rating.setScore(BigDecimal.valueOf(request.getScore()));
+        Rating rating = new Rating();
+        rating.setReservationId(request.getReservationId());
+        rating.setServiceCompliance(BigDecimal.valueOf(request.getServiceCompliance()));
+        rating.setResourceCondition(BigDecimal.valueOf(request.getResourceCondition()));
+        rating.setStaffKindness(BigDecimal.valueOf(request.getStaffKindness()));
 
         Rating saved = ratingRepository.save(rating);
-        return ratingMapper.toResponse(saved);
+
+        return RatingMapper.toResponse(saved);
     }
 
-    @SuppressWarnings("null")
+    @Override
+    public RatingResponse getRatingById(UUID id) {
+        Rating rating = ratingRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rating not found"));
+
+        return RatingMapper.toResponse(rating);
+    }
+
     @Override
     public RatingResponse updateRating(UUID id, UpdateRatingRequest request) {
 
-        Rating rating = ratingRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Rating not found with id " + id));
+        Rating rating = ratingRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rating not found"));
 
-        rating.setScore(BigDecimal.valueOf(request.getScore()));
+        if (request.getServiceCompliance() != null)
+            rating.setServiceCompliance(BigDecimal.valueOf(request.getServiceCompliance()));
+
+        if (request.getResourceCondition() != null)
+            rating.setResourceCondition(BigDecimal.valueOf(request.getResourceCondition()));
+
+        if (request.getStaffKindness() != null)
+            rating.setStaffKindness(BigDecimal.valueOf(request.getStaffKindness()));
 
         Rating updated = ratingRepository.save(rating);
-        return ratingMapper.toResponse(updated);
-    }
 
-    @SuppressWarnings("null")
-    @Override
-    public RatingResponse getRatingById(UUID id) {
-        Rating rating = ratingRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Rating not found with id " + id));
-
-        return ratingMapper.toResponse(rating);
+        return RatingMapper.toResponse(updated);
     }
 
     @Override
-    public RatingResponse getRatingByReservationId(UUID reservationId) {
-        Rating rating = ratingRepository.findByReservationId(reservationId)
-                .orElseThrow(() -> new EntityNotFoundException("Rating not found for reservation " + reservationId));
-
-        return ratingMapper.toResponse(rating);
+    public void deleteRating(UUID id) {
+        if (!ratingRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Rating not found");
+        }
+        ratingRepository.deleteById(id);
     }
 
     @Override
-    public Double getGlobalAverageScore() {
+    public Double getGlobalAverage() {
         return ratingRepository.getGlobalAverageScore();
     }
 
     @Override
-    public Double getAverageScoreByReservation(UUID reservationId) {
+    public Double getAverageForReservation(UUID reservationId) {
         return ratingRepository.getAverageByReservation(reservationId);
     }
 
-    @SuppressWarnings("null")
     @Override
-    public void deleteRating(UUID id) {
-        if (!ratingRepository.existsById(id)) {
-            throw new EntityNotFoundException("Rating not found with id " + id);
-        }
-        ratingRepository.deleteById(id);
-    }
-}
+    public boolean existsByReservationId(UUID reservationId) {
+        return ratingRepository.existsByReservationId(reservationId);
 
+    }
+    @Override
+    public RatingResponse getRatingByReservationId(UUID reservationId) {
+        Rating rating = ratingRepository.findByReservationId(reservationId)
+                .orElseThrow(() -> new RuntimeException("Rating not found for reservation " + reservationId));
+
+        return RatingMapper.toResponse(rating);
+    }
+
+}

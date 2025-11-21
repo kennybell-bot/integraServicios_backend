@@ -4,17 +4,46 @@ import jakarta.validation.constraints.*;
 
 public class UpdateRatingRequest {
 
-    @NotNull(message = "score is required")
-    @DecimalMin(value = "0.0", message = "score must be at least 0.0")
-    @DecimalMax(value = "5.0", message = "score must be at most 5.0")
-    @Digits(integer = 1, fraction = 1, message = "score must have exactly one decimal place")
-    private Double score;
+    @NotNull(message = "serviceCompliance is required")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "5.0")
+    @Digits(integer = 1, fraction = 1)
+    private Double serviceCompliance;
 
-    public Double getScore() {
-        return score;
+    @NotNull(message = "resourceCondition is required")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "5.0")
+    @Digits(integer = 1, fraction = 1)
+    private Double resourceCondition;
+
+    @NotNull(message = "staffKindness is required")
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "5.0")
+    @Digits(integer = 1, fraction = 1)
+    private Double staffKindness;
+
+    public Double getServiceCompliance() {
+        return serviceCompliance;
     }
 
-    public void setScore(Double score) {
-        this.score = score;
+    public void setServiceCompliance(Double serviceCompliance) {
+        this.serviceCompliance = serviceCompliance;
+    }
+
+    public Double getResourceCondition() {
+        return resourceCondition;
+    }
+
+    public void setResourceCondition(Double resourceCondition) {
+        this.resourceCondition = resourceCondition;
+    }
+
+    public Double getStaffKindness() {
+        return staffKindness;
+    }
+
+    public void setStaffKindness(Double staffKindness) {
+        this.staffKindness = staffKindness;
     }
 }
+
