@@ -28,10 +28,10 @@ public class RatingMapper {
     }
 
     // Entity -> Response DTO
-    public static RatingResponse toResponse(Rating rating) {
+    public RatingResponse toResponse(Rating rating) {
         OffsetDateTime createdAtOffset =
                 rating.getCreatedAt().atOffset(ZoneOffset.UTC);
-        
+
         return new RatingResponse(
                 rating.getId(),
                 rating.getReservationId(),
@@ -39,5 +39,5 @@ public class RatingMapper {
                 createdAtOffset
         );
     }
-    
+
 }
