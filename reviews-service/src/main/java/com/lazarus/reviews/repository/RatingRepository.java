@@ -15,10 +15,19 @@ public interface RatingRepository extends JpaRepository<Rating, UUID> {
     boolean existsByReservationId(UUID reservationId);
 
     // Promedio de todos los ratings
-    @Query("SELECT AVG(r.score) FROM Rating r")
+    @Query("""
+        SELECT AVG((r.serviceCompliance + r.resourceCondition + r.staffKindness) / 3)
+        FROM Rating r
+    """)
     Double getGlobalAverageScore();
 
+
     // Promedio de un rating particular (por reserva)
-    @Query("SELECT AVG(r.score) FROM Rating r WHERE r.reservationId = :reservationId")
+    @Query("""
+        SELECT (r.serviceCompliance + r.resourceCondition + r.staffKindness) / 3
+        FROM Rating r
+        WHERE r.reservationId = :reservationId
+    """)
     Double getAverageByReservation(@Param("reservationId") UUID reservationId);
+
 }

@@ -39,6 +39,7 @@ public class RatingServiceImpl implements RatingService {
         return RatingMapper.toResponse(saved);
     }
 
+    @SuppressWarnings("null")
     @Override
     public RatingResponse getRatingById(UUID id) {
         Rating rating = ratingRepository
@@ -48,6 +49,7 @@ public class RatingServiceImpl implements RatingService {
         return RatingMapper.toResponse(rating);
     }
 
+    @SuppressWarnings("null")
     @Override
     public RatingResponse updateRating(UUID id, UpdateRatingRequest request) {
 
@@ -69,6 +71,7 @@ public class RatingServiceImpl implements RatingService {
         return RatingMapper.toResponse(updated);
     }
 
+    @SuppressWarnings("null")
     @Override
     public void deleteRating(UUID id) {
         if (!ratingRepository.existsById(id)) {
