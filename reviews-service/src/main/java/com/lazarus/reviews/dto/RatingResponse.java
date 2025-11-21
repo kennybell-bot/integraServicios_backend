@@ -17,6 +17,7 @@ public class RatingResponse {
         this.createdAt = createdAt;
     }
 
+
     public UUID getId() {
         return id;
     }
