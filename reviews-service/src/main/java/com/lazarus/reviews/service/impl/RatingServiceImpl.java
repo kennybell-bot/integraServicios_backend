@@ -8,6 +8,8 @@ import com.lazarus.reviews.mapper.RatingMapper;
 import com.lazarus.reviews.model.Rating;
 import com.lazarus.reviews.repository.RatingRepository;
 import com.lazarus.reviews.service.RatingService;
+import com.lazarus.reviews.client.ResourceClient;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +21,17 @@ import java.util.UUID;
 public class RatingServiceImpl implements RatingService {
 
     private final RatingRepository ratingRepository;
+    private final ResourceClient resourceClient; // <-- inyectamos Feign client
 
     @Override
     public RatingResponse createRating(CreateRatingRequest request) {
+
+        // Validar que el recurso exista en el otro microservicio
+        try {
+            resourceClient.getResourceById(request.getReservationId().toString());
+        } catch (FeignException.NotFound e) {
+            throw new ResourceNotFoundException("Resource with ID " + request.getReservationId() + " does not exist");
+        }
 
         // aseguramos unicidad por reservationId
         if (ratingRepository.existsByReservationId(request.getReservationId())) {
@@ -93,8 +103,8 @@ public class RatingServiceImpl implements RatingService {
     @Override
     public boolean existsByReservationId(UUID reservationId) {
         return ratingRepository.existsByReservationId(reservationId);
-
     }
+
     @Override
     public RatingResponse getRatingByReservationId(UUID reservationId) {
         Rating rating = ratingRepository.findByReservationId(reservationId)
